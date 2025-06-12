@@ -11,6 +11,10 @@ interface DOMListTask {
 
 export default class ListTemplate implements DOMListTask{
     ul: HTMLUListElement
+
+    static instance: ListTemplate = new ListTemplate()
+
+
     private constructor(){
         this.ul = document.getElementById("listItems") as HTMLUListElement
     }
@@ -48,6 +52,10 @@ export default class ListTemplate implements DOMListTask{
 
             button.addEventListener('click' , ()=>{
                 fullList.removeItem(x.id)
+               
+                // fullList.save()
+
+                this.render(fullList)
             })
         
         })
