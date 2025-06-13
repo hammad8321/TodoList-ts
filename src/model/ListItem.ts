@@ -1,46 +1,38 @@
-export interface Task {
-    id : string,
-    tasky : string,
+export interface Item {
+    id: string,
+    item: string,
     checked: boolean,
-
 }
 
+export default class ListItem implements Item {
 
-export default class ListTask implements Task{
-
-
-   
-
-      constructor(
-        private _id: string = '', 
-        private _tasky: string = '', 
+    constructor(
+        private _id: string = '',
+        private _item: string = '',
         private _checked: boolean = false,
-    ) {
-       
-    }
-    
-    
-    get id():string{
+    ) { }
+
+    get id(): string {
         return this._id
-    
     }
-    set id(id:string){
-        this._id=id
+
+    set id(id: string) {
+        this._id = id
     }
-    
-    get tasky():string{
-        return this._tasky
-    
+
+    get item(): string {
+        return this._item
     }
-    set tasky(tasky:string){
-        this._tasky=tasky
+
+    set item(item: string) {
+        this._item = item
     }
-    
-    get checked():boolean{
+
+    get checked(): boolean {
         return this._checked
-    
     }
-    set checked(checked:boolean){
-        this._checked=checked
+
+    set checked(checked: boolean) {
+        this._checked = checked
     }
 }

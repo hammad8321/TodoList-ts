@@ -1,50 +1,40 @@
- import './css/style.css'
-
-
- import FullListTask  from './model/FullListTask'
-
-
-import ListTask from './model/ListItem'
-
+import './css/style.css'
+import FullList from './model/FullListTask'
+import ListItem from './model/ListItem'
 import ListTemplate from './templates/ListTemplate'
 
+const initApp = (): void => {
+  const fullList = FullList.instance
+  const template = ListTemplate.instance
 
+  // Add listener to new entry form submit
+  const itemEntryForm = document.getElementById("itemEntryForm") as HTMLFormElement
 
-const initApp =():void => {
+  itemEntryForm.addEventListener("submit", (event: SubmitEvent): void => {
+    event.preventDefault()
 
-    const fullList = FullListTask.instance
-    const template = ListTemplate.instance
+    // Get the new item value
+    const input = document.getElementById("newItem") as HTMLInputElement
+    const newEntryText: string = input.value.trim()
+    if (!newEntryText.length) return
 
+    // calculate item ID
+    const itemId: number = fullList.list.length
+      ? parseInt(fullList.list[fullList.list.length - 1].id) + 1
+      : 1
 
-    const itemEntryForm = document.getElementById("itemEntryForm") as HTMLFormElement
+    // create new item
+    const newItem = new ListItem(itemId.toString(), newEntryText)
+    // Add new item to full list
+    fullList.addItem(newItem)
+    // Re-render list with new item included
+
+    template.render(fullList)
+   
     
-    itemEntryForm.addEventListener("submit", (event: SubmitEvent):void=>{
-        event.preventDefault()
-        const input = document.getElementById("newItem") as HTMLInputElement
-        const newEntryText : string = input.value.trim()
+  })
 
-        console.log("enter valur" + newEntryText)
-        
-
-        if(!newEntryText.length) return 
-
-        const itemId : number = fullList.list.length
-        ? parseInt(fullList.list[fullList.list.length-1].id) +1
-        :1
-
-        const newTask = new ListTask(itemId.toString(), newEntryText)
-        console.log ("task-"+ newTask)
-        fullList.addTask(newTask)
-
-        template.render(fullList)
-
-         console.log("hammad"+fullList)
-
-
-
-
-    })
-
+  // Add listener to "Clear" button
   const clearItems = document.getElementById("clearItemsButton") as HTMLButtonElement
 
   clearItems.addEventListener('click', (): void => {
@@ -52,23 +42,11 @@ const initApp =():void => {
     template.clear()
   })
 
-
-
-  //  const clearItem = document.getElementById("clearItem") as HTMLButtonElement
-
-    // clearItem.addEventListener('click', (): void =>{
-    //     fullList.clearList()
-    //     template.clear()
-        
-    // })
-     fullList.load()
-     template.render(fullList)
-
+  // load initial data
+  fullList.load()
+   console.log("hamm"+fullList)
+  // initial render of template
+  
 }
 
-
 document.addEventListener("DOMContentLoaded", initApp) 
-
-
-
- //  https://www.youtube.com/watch?v=61v23Ce5SXA&ab_channel=DaveGray

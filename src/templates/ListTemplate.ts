@@ -1,64 +1,59 @@
-import FullListTask from "../model/FullListTask";
+import FullList from "../model/FullListTask";
 
-
-interface DOMListTask {
-    ul: HTMLUListElement
-    clear(): void,
-    render(fullList: FullListTask): void,
-
+interface DOMList {
+  ul: HTMLUListElement;
+  clear(): void;
+  render(fullList: FullList): void;
 }
 
+export default class ListTemplate implements DOMList {
+  ul: HTMLUListElement;
 
-export default class ListTemplate implements DOMListTask{
-    ul: HTMLUListElement
+  static instance: ListTemplate = new ListTemplate();
 
-    static instance: ListTemplate = new ListTemplate()
+  private constructor() {
+    this.ul = document.getElementById("listItems") as HTMLUListElement;
+  }
 
+  clear(): void {
+    this.ul.innerHTML = "";
+  }
 
-    private constructor(){
-        this.ul = document.getElementById("listItems") as HTMLUListElement
-    }
+  render(fullList: FullList): void {
+    this.clear();
 
-    clear():void {
-        this.ul.innerHTML=""
+    fullList.list.forEach((item) => {
+      const li = document.createElement("li") as HTMLLIElement;
+      li.className = "item";
 
-    }
-    render (fullList: FullListTask): void{
-        this.clear()
-        fullList.list.forEach(x=>{
-            const li = document.createElement("li") as HTMLLIElement
-            li.className="item"
-            const check = document.createElement("input") as HTMLInputElement
-            check.type= "checkbox"
-            check.id =  x.id   
-            check.tabIndex=0
-            check.checked = x.checked   
-            li.append(check)
+      const check = document.createElement("input") as HTMLInputElement;
+      check.type = "checkbox";
+      check.id = item.id;
+      check.checked = item.checked;
+      li.append(check);
 
-            check.addEventListener('change', ()=>{
-                x.checked =!x.checked
-                fullList.save()
-            })
+      check.addEventListener("change", () => {
+        item.checked = !item.checked;
+        fullList.save();
+      });
 
-            const label = document.createElement("label") as HTMLLabelElement
-            label.htmlFor = x.id
-            label.textContent = x.tasky
-            li.append(label)
+      const label = document.createElement("label") as HTMLLabelElement;
+      label.htmlFor = item.id;
+      label.textContent = item.item;
+      li.append(label);
 
-            const button = document.createElement("button") as HTMLButtonElement
-            button.className ='button'
-            button.textContent = 'X'
-            li.append(button)
+      const button = document.createElement("button") as HTMLButtonElement;
+      button.className = "button";
+      button.textContent = "X";
+      li.append(button);
 
-            button.addEventListener('click' , ()=>{
-                fullList.removeItem(x.id)
-               
-                // fullList.save()
+      button.addEventListener("click", () => {
+        fullList.removeItem(item.id);
+        this.render(fullList);
+       
+      });
 
-                this.render(fullList)
-            })
-        
-        })
-    }
-
+      this.ul.append(li);
+    });
+  }
 }

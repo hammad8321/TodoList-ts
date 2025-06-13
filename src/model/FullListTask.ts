@@ -1,107 +1,52 @@
-import ListTask from "./ListItem";
+import ListItem from './ListItem'
+
 interface List {
-  list: ListTask[];
-  load(): void;
-  save(): void;
-  clearList(): void;
-  addTask(taskObj: ListTask): void;
-  removeItem(id: string): void;
+    list: ListItem[],
+    load(): void,
+    save(): void,
+    clearList(): void,
+    addItem(itemObj: ListItem): void,
+    removeItem(id: string): void,
 }
 
+export default class FullList implements List {
 
-// export default class FullListTask implements ListTask {
+    static instance: FullList = new FullList()
 
-//     static instance: ListTask = new ListTask()
+    private constructor(private _list: ListItem[] = []) { }
 
-//     private constructor(private _list: ListTask[] = []) { }
+    get list(): ListItem[] {
+        return this._list
+    }
 
-//     get list(): ListTask[] {
-//         return this._list
-//     }
+    load(): void {
+        const storedList: string | null = localStorage.getItem("myList")
+        if (typeof storedList !== "string") return
 
-//     load(): void {
-//         const storedList: string | null = localStorage.getItem("myList")
-//         if (typeof storedList !== "string") return
+        const parsedList: { _id: string, _item: string, _checked: boolean }[] = JSON.parse(storedList)
 
-//         const parsedList: { _id: string, _list: string, _checked: boolean }[] = JSON.parse(storedList)
+        parsedList.forEach(itemObj => {
+            const newListItem = new ListItem(itemObj._id, itemObj._item, itemObj._checked)
+            FullList.instance.addItem(newListItem)
+        })
+    }
 
-//         parsedList.forEach(itemObj => {
-//             const newListItem = new ListTask(itemObj._id, itemObj._list, itemObj._checked)
-//              FullListTask.instance.addTask(ListTask);
+    save(): void {
+        localStorage.setItem("myList", JSON.stringify(this._list))
+    }
 
-           
-//         })
-//     }
+    clearList(): void {
+        this._list = []
+        this.save()
+    }
 
-//     save(): void {
-//         localStorage.setItem("myList", JSON.stringify(this._list))
-//     }
+    addItem(itemObj: ListItem): void {
+        this._list.push(itemObj)
+        this.save()
+    }
 
-//     clearList(): void {
-//         this._list = []
-//         this.save()
-//     }
-
-//     addTask(itemObj: ListTask): void {
-//         this._list.push(itemObj)
-//         this.save()
-//     }
-
-//     removeItem(id: string): void {
-//         this._list = this._list.filter(item => item.id !== id)
-//         this.save()
-//     }
-// }
-//_____________________________________________________________________________________________________________
-
-export default class FullListTask implements List {
-  static instance: FullListTask = new FullListTask();
-
-  private constructor(private _list: ListTask[] = []) {}
-  get list(): ListTask[] {
-    return this._list;
-  }
-
-  load(): void {
-    const storedList: string | null = localStorage.getItem("myList");
-    if (typeof storedList !== "string") return;
-
-    const parsedList: {
-      _id: string;
-      _list: string;
-      _checked: boolean;
-    }[] = JSON.parse(storedList);
-
-    parsedList.forEach((taskObj) => {
-      const newListTask = new ListTask(
-        taskObj._id,
-        taskObj._list,
-        taskObj._checked
-      );
-      FullListTask.instance.addTask(newListTask);
-
-
-    });
-    console.log("list" + this.list)
-  }
-
-  save(): void {
-    localStorage.setItem("myList", JSON.stringify(this.addTask));
-  }
-
-  clearList(): void {
-    this._list = [];
-    this.save();
-  }
-  addTask(taskObj: ListTask): void {
-    this._list.push(taskObj);
-
-    console.log("taskobj- " + taskObj);
-    this.save();
-  }
-
-  removeItem(id: string): void {
-    this._list = this._list.filter((x) => x.id! == id);
-    this.save();
-  }
+    removeItem(id: string): void {
+        this._list = this._list.filter(item => item.id !== id)
+        this.save()
+    }
 }
